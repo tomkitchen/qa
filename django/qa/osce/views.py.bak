@@ -1,0 +1,73 @@
+from django.shortcuts import render
+from django.http import HttpResponse
+from .models import Card
+import random
+
+
+# Create your views here.
+
+def osce_random(request):
+	all_cards = Card.objects.all()
+	stations = Card._meta.get_field('station').choices
+	count = len(stations)
+	index = random.random() * (count)
+        int_index = int(round(index, 0))
+        return osce(request, int_index)
+
+def get_random_station():
+	stations = Card._meta.get_field('station').choices
+        count = len(stations)
+        index = random.random() * (count)
+        int_index = int(round(index, 0))
+	int_index = 1
+	if int_index == 1:
+		return station1()
+	else:
+		return station1()
+
+def stationDetails(station):
+	if station == '1':
+		weight = random.randint(3, 50)
+      		period = random.randint(1, 23)
+       		maintenanceRate = random.randint(20, 100)
+      		dripFactor = random.randint(10, 50)
+		totalMaintenance = maintenanceRate * weight
+		hourlyMaintenance = totalMaintenance / float(24)
+		minuteMaintenance = hourlyMaintenance / float(24)
+		frequency = hourlyMaintenance * dripFactor
+      		qText =  "The vetinary surgeon decides that a %d kg patient requires administration of intravenous crystalloid fluids, over a period of %d hours.<br>Maintenance rate = %d ml/kg/day<br>Drip factor = %d drops/ml<br><br>Calculate:<br>a; The total daily maintenance<br>b; ml per hour<br>c; The fluid administration rate (Drops per minute or frequency of drops)" % (weight, period, maintenanceRate, dripFactor)
+    		aText = "a; total daily maintenance = maintenance rate x mass<br>
+				= %d x %d = %d ml <br><br>
+			b; ml per hr = total daily maintenance &divide; 24<br>
+				= %d &divide; 24 = %.2f ml/hr<br><br>
+			c; drops per min:<br>    
+				i;ml per min = ml per hr &divide; 60 = %.f &divide; 60 = %.2f<br>    
+				ii;24 x drip factor<br>= %d &divide; 24  = %.2f drops/min" % 
+			(maintenanceRate, weight, totalMaintenance, 
+			totalMaintenance, hourlyMaintenance, 
+			hourlyMaintenance, minuteMaintenance,
+			dripFactor, frequency)	
+		context = {'qText': qText, 'aText': aText}
+        	return context
+	elif station == '2':
+		doseRate = random.randint(10,100)
+		mass = random.randint(2,50)
+		qText = "A young %dkg Labrador has had a fracture repair to his left fore leg. He is to be administered [generic name] as [trade name].<br><br>Using the dose rate %dml/kg:<br><br>Calculate the correct dose of [generic name] to be given to this patient" % (mass, doseRate)
+		aText = "dose = mass x dose rate<br>= %d x %d = %dml" % (mass, doseRate, mass * doseRate)
+		context = {'qText': qText, 'aText': aText}
+		return context
+	else:
+		context = {'qText': 'other', 'aText': 'other'}
+		return context
+
+def osce(request, stn):
+	stations = Card._meta.get_field('station').choices
+        count = len(stations)
+        index = random.random() * (count)
+        int_index = int(round(index, 0))
+	if stn == '999':
+                stn = str(int_index)
+	context = stationDetails(stn)
+	context['stationNumber'] = stn
+	context['station'] = Card._meta.get_field('station').choices[int(stn) - 1][1]
+    	return render(request, 'osce.html', context)

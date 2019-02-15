@@ -1,0 +1,9 @@
+#!/bin/bash
+sql="mysql -u root -pbasil"
+COUNTER=1
+	while [  $COUNTER -lt 571 ]; do
+		question=$(echo "use oldbackup; select question from threetwelve where number = $COUNTER;" | $sql | sed -n 2p)
+		answer=$(echo "use oldbackup; select answer from threetwelve where number = $COUNTER;" | $sql | sed -n 2p)
+		echo "from module312.models import Module312Card;entry = Module312Card(question = '$question', answer = '$answer');entry.save()" | python manage.py shell
+		let COUNTER=COUNTER+1 
+	done

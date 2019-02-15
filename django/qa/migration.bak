@@ -1,0 +1,9 @@
+#!/bin/bash
+
+sql="mysql -u root -pbasil"
+question=$(echo "use oldbackup; select question from threeoeight where number = 6;" | $sql | sed -n 2p)
+answer=$(echo "use oldbackup; select answer from threeoeight where number = 6;" | $sql | sed -n 2p)
+echo $question
+echo $answer
+
+echo "from module316.models import Module316Card;entry = Module316Card(question = '$question', answer = '$answer');entry.save()" | python manage.py shell
