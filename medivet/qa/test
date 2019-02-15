@@ -1,4 +1,0 @@
-#!/bin/bash
-while read question; do
-	mysql -u root -pbasil -t -e "use oldbackup;select question from threeonine where question like '%$question%';select answer from threeonine where question like '%$question%';"
-done < diff309
