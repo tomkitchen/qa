@@ -1,8 +1,11 @@
 language: python
+
 services:
 - docker
+
 install: true
+
 script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build -t tkitchen00/qa .
-  - docker push tkitchen00/qa
+  - docker pull tkitchen00/lambda
+  - docker run tkitchen00/lambda /bin/bash -c "echo hello from lambda"
